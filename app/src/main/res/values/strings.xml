@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">LoanCalculator</string>
+    <string name="app_name">Loan Calculator</string>
     <string name="loan_amount">Loan Amount</string>
     <string name="down_payment">Down Payment</string>
     <string name="term">Term</string>
