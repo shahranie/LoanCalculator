@@ -1,5 +1,7 @@
 package com.shahranie.android.loancalculator;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,6 +27,23 @@ public class CalculatorActivity extends AppCompatActivity {
         tvTotalRepayment = (TextView) findViewById(R.id.total_repayment);
         tvTotalInterest = (TextView) findViewById(R.id.total_interest);
         tvAverageMonthlyInterest = (TextView) findViewById(R.id.average_monthly_interest);
+
+        // start for sharedPrefences - to display back
+
+        SharedPreferences sp = getSharedPreferences(PREFS_CALCULATIONS, Context.MODE_PRIVATE);
+        if(sp.getBoolean(HAS_RECORD, false)){
+            tvMonthlyPayment.setText(sp.getString(MONTHLY_REPAYMENT,""));
+            tvTotalRepayment.setText(sp.getString(TOTAL_REPAYMENT,""));
+            tvTotalInterest.setText(sp.getString(TOTAL_INTEREST,""));
+            tvAverageMonthlyInterest.setText(sp.getString(MONTHLY_INTEREST,""));
+
+            etLoanAmount.setText(sp.getString(AMOUNT,""));
+            etDownPayment.setText(sp.getString(DOWNPAYMENT,""));
+            etTerm.setText(sp.getString(TERM,""));
+            etAnnualInterestRate.setText(sp.getString(INTEREST_RATE,""));
+        }
+
+        // end for sharedPrefences
     }
 
     private EditText etLoanAmount, etDownPayment, etTerm, etAnnualInterestRate;
@@ -43,7 +62,20 @@ public class CalculatorActivity extends AppCompatActivity {
         }
 
     }
+    // start for sharedPrefences
+    public static  final String PREFS_CALCULATIONS = "LoanCalculation";
+    public static  final String HAS_RECORD  = "hasRecord";
+    public static final String MONTHLY_REPAYMENT = "monthly repayment";
+    public static final String TOTAL_REPAYMENT = "total repayment";
+    public static final String TOTAL_INTEREST = "total interest";
+    public static final String MONTHLY_INTEREST = "monthly interest";
 
+    public static final String AMOUNT = "amount";
+    public static final String DOWNPAYMENT = "downpayment";
+    public static final String INTEREST_RATE = "interest rate";
+    public static final String TERM = "term rate";
+
+    // end for sharedPrefences
     private void calculate(){
         String amount = etLoanAmount.getText().toString();
         String downPayment = etDownPayment.getText().toString();
@@ -66,6 +98,29 @@ public class CalculatorActivity extends AppCompatActivity {
             tvTotalRepayment.setText(formatD.format(totalRepayment));
             tvTotalInterest.setText(formatD.format(totalInterest));
             tvAverageMonthlyInterest.setText(formatD.format(monthlyInterest));
+
+            // start for sharedPrefences - to stored
+            String mr = formatD.format(monthlyRepayment);
+            String tr = formatD.format(totalRepayment);
+            String ti = formatD.format(totalInterest);
+            String mi = formatD.format(monthlyInterest);
+
+            SharedPreferences sp = getSharedPreferences(PREFS_CALCULATIONS, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sp.edit();
+
+            editor.putString(AMOUNT, amount);
+            editor.putString(DOWNPAYMENT, downPayment);
+            editor.putString(INTEREST_RATE, interestRate);
+            editor.putString(TERM, term);
+
+            editor.putString(MONTHLY_REPAYMENT, mr);
+            editor.putString(TOTAL_REPAYMENT, tr);
+            editor.putString(TOTAL_INTEREST, ti);
+            editor.putString(MONTHLY_INTEREST, mi);
+            editor.putBoolean(HAS_RECORD,true);
+            editor.apply();
+            // end for sharedPrefences
+
         }
     }
 
